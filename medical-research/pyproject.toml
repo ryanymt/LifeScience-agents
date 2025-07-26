@@ -2,21 +2,18 @@
 name = "medical_research"
 version = "0.1"
 description = "AI-driven agent for medical research queries."
-authors = []
+authors = ["Ryan Ye Min Thein - ryanymt@google.com" ]
 license = "Apache License 2.0"
 readme = "README.md"
-# Add this line back. It tells Poetry that the "medical_research" package
-# is a directory in the project's root.
-packages = [{ include = "medical_research" }]
+
 
 [tool.poetry.dependencies]
 python = "^3.9"
-google-adk = "^1.0.0"
-google-genai = "^1.9.0"
+google-adk = "^1.8.0"
+google-genai = "^1.21.1"
 pydantic = "^2.10.6"
 python-dotenv = "^1.0.1"
-google-cloud-aiplatform = { version = "^1.93", extras = [
-    "adk",
+google-cloud-aiplatform = { version = "^1.105.0", extras = [
     "agent-engines",
 ] }
 

@@ -18,12 +18,13 @@ import os
 import vertexai
 from absl import app, flags
 from dotenv import load_dotenv
-from vertexai.preview.reasoning_engines import ReasoningEngine
+from vertexai import agent_engines
 
 FLAGS = flags.FLAGS
-flags.DEFINE_string("resource_id", None, "ReasoningEngine resource ID.")
+flags.DEFINE_string("resource_id", None, "Agent Engine resource ID.")
 flags.DEFINE_string("user_id", "user", "A unique ID for the user.")
 flags.mark_flag_as_required("resource_id")
+
 
 def main(_):
     load_dotenv()
@@ -35,7 +36,8 @@ def main(_):
 
     vertexai.init(project=project_id, location=location)
 
-    agent = ReasoningEngine(FLAGS.resource_id)
+    agent = agent_engines.get(FLAGS.resource_id)
+    session = agent.create_session(user_id=FLAGS.user_id)
     print(f"Connected to agent: {agent.display_name}")
     print("Type 'quit' to exit.")
 
@@ -44,8 +46,9 @@ def main(_):
         if user_input.lower() == "quit":
             break
 
-        response = agent.query(input=user_input)
-        print(f"Response: {response}")
+        response = agent.query(session_id=session["id"], message=user_input)
+        print(f"Response: {response.text}")
+
 
 if __name__ == "__main__":
     app.run(main)

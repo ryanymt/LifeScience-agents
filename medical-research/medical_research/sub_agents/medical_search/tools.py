@@ -17,6 +17,14 @@
 import os
 from google.cloud.aiplatform import Endpoint
 
+import vertexai
+
+# Initialize the Vertex AI SDK
+vertexai.init(
+    project=os.environ.get("GOOGLE_CLOUD_PROJECT"),
+    location=os.environ.get("GOOGLE_CLOUD_LOCATION"),
+)
+
 def query_medical_knowledge(question: str) -> str:
     """
     Answers a general medical question using the MedGemma model.

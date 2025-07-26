@@ -19,46 +19,54 @@ import vertexai
 from absl import app, flags
 from dotenv import load_dotenv
 from medical_research.agent import root_agent
-from vertexai.preview.reasoning_engines import ReasoningEngine
+from vertexai import agent_engines
+from vertexai.preview.reasoning_engines import AdkApp
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("project_id", None, "GCP project ID.")
 flags.DEFINE_string("location", None, "GCP location.")
 flags.DEFINE_string("bucket", None, "GCP storage bucket.")
-flags.DEFINE_string("resource_id", None, "ReasoningEngine resource ID.")
+flags.DEFINE_string("resource_id", None, "Agent Engine resource ID.")
 flags.DEFINE_bool("create", False, "Creates a new agent.")
 flags.DEFINE_bool("delete", False, "Deletes an existing agent.")
 flags.DEFINE_bool("list", False, "Lists all agents.")
 flags.mark_bool_flags_as_mutual_exclusive(["create", "delete", "list"])
 
+
 def create_agent():
-    """Creates a new Reasoning Engine for the Medical Research agent."""
-    remote_agent = ReasoningEngine.create(
-        root_agent,
+    """Creates a new Agent Engine for the Medical Research agent."""
+    # Wrap the root agent in an AdkApp instance
+    adk_app = AdkApp(agent=root_agent)
+    remote_agent = agent_engines.create(
+        adk_app,
         display_name="medical_research",
         requirements=[
             "google-adk>=1.0.0",
             "google-cloud-aiplatform>=1.93",
+            "python-dotenv>=1.0.1",
         ],
     )
     print(f"Created remote agent: {remote_agent.resource_name}")
 
+
 def delete_agent(resource_id: str):
-    """Deletes an existing Reasoning Engine."""
-    remote_agent = ReasoningEngine(resource_id)
-    remote_agent.delete()
+    """Deletes an existing Agent Engine."""
+    remote_agent = agent_engines.get(resource_id)
+    remote_agent.delete(force=True)
     print(f"Deleted remote agent: {resource_id}")
 
+
 def list_agents():
-    """Lists all Reasoning Engines in the project."""
-    remote_agents = ReasoningEngine.list()
+    """Lists all Agent Engines in the project."""
+    remote_agents = agent_engines.list()
     if not remote_agents:
         print("No remote agents found.")
         return
 
     print("All remote agents:")
     for agent in remote_agents:
-        print(f"- {agent.resource_name} (Display Name: {agent.display_name})")
+        print(f"- {agent.name} (Display Name: {agent.display_name})")
+
 
 def main(_):
     load_dotenv()
@@ -84,6 +92,7 @@ def main(_):
         list_agents()
     else:
         print("No action specified. Use --create, --delete, or --list.")
+
 
 if __name__ == "__main__":
     app.run(main)
