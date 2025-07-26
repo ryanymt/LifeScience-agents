@@ -1,10 +1,13 @@
-[project]
+[tool.poetry]
 name = "medical_research"
 version = "0.1"
 description = "AI-driven agent for medical research queries."
 authors = []
 license = "Apache License 2.0"
 readme = "README.md"
+# Add this line back. It tells Poetry that the "medical_research" package
+# is a directory in the project's root.
+packages = [{ include = "medical_research" }]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -17,17 +20,19 @@ google-cloud-aiplatform = { version = "^1.93", extras = [
     "agent-engines",
 ] }
 
-[tool.poetry.group.dev]
-optional = true
-
 [tool.poetry.group.dev.dependencies]
-google-adk = { extras = ["eval"], version = "^1.0.0" }
 pytest = "^8.3.5"
 pytest-asyncio = "^0.26.0"
-python-dotenv = "^1.0.1"
+
+[tool.poetry.group.deployment]
+optional = true
+
+[tool.poetry.group.deployment.dependencies]
+absl-py = "^2.1.0"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+# We don't need a pythonpath with this flat structure
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
