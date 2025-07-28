@@ -33,7 +33,7 @@ flags.DEFINE_bool("list", False, "Lists all agents.")
 flags.mark_bool_flags_as_mutual_exclusive(["create", "delete", "list"])
 
 
-def create_agent():
+def create_agent(env_vars):
     """Creates a new Agent Engine for the Medical Research agent."""
     # Wrap the root agent in an AdkApp instance
     adk_app = AdkApp(agent=root_agent)
@@ -45,6 +45,10 @@ def create_agent():
             "google-cloud-aiplatform>=1.93",
             "python-dotenv>=1.0.1",
         ],
+        extra_packages=[
+            "./medical_research"
+        ],
+        env_vars=env_vars
     )
     print(f"Created remote agent: {remote_agent.resource_name}")
 
@@ -70,9 +74,14 @@ def list_agents():
 
 def main(_):
     load_dotenv()
+    env_vars = {}
+
     project_id = FLAGS.project_id or os.getenv("GOOGLE_CLOUD_PROJECT")
     location = FLAGS.location or os.getenv("GOOGLE_CLOUD_LOCATION")
     bucket = FLAGS.bucket or os.getenv("GOOGLE_CLOUD_STORAGE_BUCKET")
+
+    env_vars["TXGEMMA_ENDPOINT_ID"] = os.getenv("TXGEMMA_ENDPOINT_ID")
+    env_vars["MEDGEMMA_ENDPOINT_ID"] = os.getenv("MEDGEMMA_ENDPOINT_ID")
 
     if not all([project_id, location, bucket]):
         raise ValueError(
@@ -83,7 +92,7 @@ def main(_):
     vertexai.init(project=project_id, location=location, staging_bucket=f"gs://{bucket}")
 
     if FLAGS.create:
-        create_agent()
+        create_agent(env_vars)
     elif FLAGS.delete:
         if not FLAGS.resource_id:
             raise ValueError("The --resource_id flag is required to delete an agent.")
