@@ -13,10 +13,58 @@ This AI-driven agent is designed to assist with medical research queries. It can
 
 ### Prerequisites
 
+## Setup and Installation
+
+1.  **Prerequisites**
+
+    *   Python 3.11+
+    *   Poetry
+        *   For dependency management and packaging. Please follow the
+            instructions on the official
+            [Poetry website](https://python-poetry.org/docs/) for installation.
+
+        ```bash
+        pip install poetry
+        ```
+
+    * A project on Google Cloud Platform
+    * Google Cloud CLI
+        *   For installation, please follow the instruction on the official
+            [Google Cloud website](https://cloud.google.com/sdk/docs/install).
+
+2.  **Installation**
+
+    ```bash
+    # Clone this repository.
+    git clone https://github.com/ryanymt/LifeScience-agents
+    cd LifeScience-agents/medical-research
+    # Install the package and dependencies.
+    poetry install
+    ```
+
 - A configured Google Cloud project.
 - The Google Cloud CLI authenticated (`gcloud auth application-default login`).
 - A `.env` file in the root directory with your `GOOGLE_CLOUD_PROJECT`, `GOOGLE_CLOUD_LOCATION`, and `GOOGLE_CLOUD_STORAGE_BUCKET`. 
-- TxGemma and MedGemma endpoints are used in this demo code. You'll need to deploy TxGemma and MedGemma as vertex ai Endpoints. Sub-agents are written to align with TxGemma and MedGemma returns, rather than Gemini pro 2.5. 
+- Deploy TxGemma and MedGemma endpoints from Vertex AI > Model Garden. Note down the endpoint IDs and update in .env file . Sub-agents are written to align with TxGemma and MedGemma returns strings. 
+
+    *   Authenticate your Google Cloud account.
+
+        ```bash
+        gcloud auth application-default login
+        ```
+
+
+Move in the root directory and run adk test
+
+```bash
+adk run medical_research
+```
+
+Or on a web interface:
+
+```bash
+ adk web
+```
 
 ### Deploying the Agent
 
