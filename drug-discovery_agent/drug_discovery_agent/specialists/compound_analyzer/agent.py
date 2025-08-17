@@ -16,15 +16,17 @@
 
 from google.adk.agents import Agent
 from . import prompt
-from .tools import predict_toxicity
+from .tools import predict_toxicity, identify_compound
 
-# A standard, fast model is sufficient for this agent's reasoning.
 MODEL = "gemini-2.5-flash"
 
 compound_analyzer = Agent(
     name="compound_analyzer",
     model=MODEL,
     instruction=prompt.COMPOUND_ANALYZER_PROMPT,
-    description="Analyzes chemical compounds to predict properties like toxicity.",
-    tools=[predict_toxicity.predict_clinical_toxicity],
+    description="Identifies compounds from SMILES strings and predicts their properties like toxicity.",
+    tools=[
+        predict_toxicity.predict_clinical_toxicity,
+        identify_compound.get_compound_info
+    ],
 )
