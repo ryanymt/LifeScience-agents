@@ -2,12 +2,16 @@
 
 ## Overview
 
+***Ignore Frontend-UI for the moment
 (notes: this is work in progress. agents are built and tested individually before putting things together. Some codes are to be cleaned up)
 
 This AI-driven agent is designed to assist with medical research queries. It can answer general medical questions and perform specialized analysis on chemical compounds. The agent uses a multi-agent architecture, routing queries to the appropriate specialized model.
 
 - **Medical Search**: Powered by MedGemma for general medical questions.
 - **Medical Analyst**: Powered by TxGemma for technical analysis, such as predicting blood-brain barrier crossing from a SMILES string.
+
+  <img width="1446" height="763" alt="agent_architecture" src="https://github.com/user-attachments/assets/f9542abe-aeef-4e05-b5df-f14461df8edf" />
+
 
 ## Deployment to Vertex AI Agent Engine
 
@@ -72,3 +76,13 @@ To create and deploy the agent, run the following command:
 
 ```bash
 poetry run python deployment/deploy.py --create
+```
+
+# Agent Demo Video
+- Main agent (Gemini) routing patient diagnosis query (with medical history, symptom, early examination findings, lab test results, and challanges) to Medical Search Agent (MedGemma) and suggest diagnosis tests. 
+- Main agent (Gemini) routing molecule SMILE string query to Medical Analyst (TxGemma) to answer the question.
+
+
+https://github.com/user-attachments/assets/90ce62ac-9c77-46c1-9567-b0e671ffa56c
+
+
