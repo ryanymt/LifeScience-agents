@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "drug-discovery-agent"
+version = "0.1.0"
+description = "An agent for drug discovery tasks including compound analysis and literature research."
+authors = ["Ryan Ye Min Thein - ryanymt@google.com"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+google-adk = "^1.8.0"
+google-genai = "^1.21.1"
+pydantic = "^2.10.6"
+python-dotenv = "^1.0.1"
+google-cloud-aiplatform = { version = "^1.105.0", extras = [
+    "agent-engines",
+] }
+absl-py = "^2.3.1"
+
+
+[tool.poetry.group.deployment]
+optional = true
+
+[tool.poetry.group.deployment.dependencies]
+absl-py = "^2.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
