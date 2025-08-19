@@ -40,8 +40,6 @@ def create_agent(env_vars):
     remote_agent = agent_engines.create(
         adk_app,
         display_name="drug-discovery-agent",
-        # Dependencies are now read from pyproject.toml during deployment,
-        # but you can specify core ones here.
         requirements=[
             "google-adk>=0.2.1",
             "google-cloud-aiplatform>=1.55.0",
@@ -87,8 +85,8 @@ def main(_):
     # Load secrets from the .env file and prepare them for the agent engine.
     env_vars["TXGEMMA_PREDICT_ENDPOINT_ID"] = os.getenv("TXGEMMA_PREDICT_ENDPOINT_ID")
     env_vars["TXGEMMA_CHAT_ENDPOINT_ID"] = os.getenv("TXGEMMA_CHAT_ENDPOINT_ID")
-    env_vars["GOOGLE_CLOUD_PROJECT"] = project_id
-    env_vars["GOOGLE_CLOUD_LOCATION"] = location
+    #env_vars["GOOGLE_CLOUD_PROJECT"] = project_id
+    #env_vars["GOOGLE_CLOUD_LOCATION"] = location
 
 
     if not all([project_id, location, bucket, env_vars["TXGEMMA_PREDICT_ENDPOINT_ID"]]):
