@@ -115,4 +115,10 @@ This modular structure makes the agent easy to maintain and extend with new tool
 ----
 ## Agent Usage
 Google AgentSpace is used for the demo. 
+
 Own front-end UI can be built and call Agent engine's Agent API. (might try to add that frontend UI later)
+
+
+https://github.com/user-attachments/assets/c3692adb-27a6-4c97-a460-8c3f059b1c2f
+
+
