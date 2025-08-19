@@ -34,7 +34,7 @@ Before you begin, ensure you have the following set up:
 1.  **Clone the Repository**:
     ```bash
     git clone https://github.com/ryanymt/LifeScience-agents.git
-    cd drug_discovery_agent
+    cd drug-discovery_agent
     ```
 
 2.  **Install Dependencies**:
@@ -111,3 +111,8 @@ The agent uses a hierarchical design:
     * **`literature_researcher`**: A specialist for retrieving information from external knowledge bases (searching PubMed, general Q&A).
 
 This modular structure makes the agent easy to maintain and extend with new tools and capabilities.
+
+----
+## Agent Usage
+Google AgentSpace is used for the demo. 
+Own front-end UI can be built and call Agent engine's Agent API. (might try to add that frontend UI later)
