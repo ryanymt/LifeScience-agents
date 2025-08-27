@@ -1,7 +1,8 @@
 # Agentic-Tx: A Drug Discovery Research Agent
 (Demo recording at the end of the README)
 
-<img width="1140" height="850" alt="LifeScience Diagrams - Page 2" src="https://github.com/user-attachments/assets/554249f0-384e-4a14-8607-24913e734054" />
+<img width="1140" height="850" alt="LifeScience Diagrams - Page 2 (1)" src="https://github.com/user-attachments/assets/89d3adfd-e794-4ee1-b152-227f7958cb8d" />
+
 
 
 **Agentic-Tx** is a sophisticated AI agent designed to accelerate early-stage drug discovery workflows. Evolving from the concepts demonstrated in the original [TxGemma Agentic Demo notebook](https://github.com/google-gemini/gemma-cookbook/blob/main/TxGemma/%5BTxGemma%5DAgentic_Demo_with_Hugging_Face.ipynb), this project implements a robust, multi-agent system using the ADK framework and Google Cloud's Vertex AI.
@@ -124,6 +125,7 @@ Own front-end UI can be built and call Agent engine's Agent API. (might try to a
 
 
 https://github.com/user-attachments/assets/c3692adb-27a6-4c97-a460-8c3f059b1c2f
+
 
 
 
