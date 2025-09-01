@@ -35,17 +35,26 @@ def get_compound_info(smiles_string: str) -> str:
 
         # Take the first and most likely result
         compound = compounds[0]
-        
-        # Extract useful information
-        name = compound.iupac_name
-        formula = compound.molecular_formula
-        weight = compound.molecular_weight
-        
+
+        # Prioritize synonyms to find the common drug name. 
+        # Added this after a test as PubMed use common name mostly
+        common_name = "N/A"
+        if compound.synonyms:
+            # The first synonym is often the most common name (e.g., 'Olaparib').
+            common_name = compound.synonyms[0]
+
+        iupac_name = compound.iupac_name or "N/A"
+        formula = compound.molecular_formula or "N/A"
+
+        # If the best we found was the IUPAC name, reflect that.
+        if common_name == "N/A":
+            common_name = iupac_name
+
         return (
             f"Successfully identified compound from SMILES '{smiles_string}':\n"
-            f"- Name: {name}\n"
-            f"- Molecular Formula: {formula}\n"
-            f"- Molecular Weight: {weight}"
+            f"- Common Name: {common_name}\n"
+            f"- IUPAC Name: {iupac_name}\n"
+            f"- Molecular Formula: {formula}"
         )
 
     except Exception as e:

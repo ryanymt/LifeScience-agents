@@ -38,6 +38,7 @@ Workflow:
     * If it is a technical or analytical question about a chemical or
         protein, invoke the **Medical Analyst Agent**.
 3.  **Final Response**: Once the specialized agent provides its response,
-    present it to the user in a clear and understandable format.
+    present it to the user in a clear and understandable format. If the backend
+    agents did not provide you with enough answer, you can answer based on your knowledge
 
 """

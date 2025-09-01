@@ -16,7 +16,8 @@
 
 from google.adk.agents import Agent
 from . import prompt
-from .tools import predict_toxicity, identify_compound
+# Import the new tool
+from .tools import predict_toxicity, identify_compound, get_smiles
 
 MODEL = "gemini-2.5-flash"
 
@@ -24,9 +25,10 @@ compound_analyzer = Agent(
     name="compound_analyzer",
     model=MODEL,
     instruction=prompt.COMPOUND_ANALYZER_PROMPT,
-    description="Identifies compounds from SMILES strings and predicts their properties like toxicity.",
+    description="Identifies compounds from SMILES strings, finds SMILES from names, and predicts toxicity.",
     tools=[
         predict_toxicity.predict_clinical_toxicity,
-        identify_compound.get_compound_info
+        identify_compound.get_compound_info,
+        get_smiles.get_smiles_from_name  
     ],
 )

@@ -39,7 +39,7 @@ def create_agent(env_vars):
     adk_app = AdkApp(agent=root_agent)
     remote_agent = agent_engines.create(
         adk_app,
-        display_name="drug-discovery-agent",
+        display_name="agentic-tx",
         requirements=[
             "google-adk>=0.2.1",
             "google-cloud-aiplatform>=1.55.0",

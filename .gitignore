@@ -205,3 +205,9 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# temp files
+medical-research/deployment/agentspace.sh
+medical-research/deployment/temp-deploy.sh
+medical-research/deployment/temp.sh
+medical-research/deployment/test_deployment.py
