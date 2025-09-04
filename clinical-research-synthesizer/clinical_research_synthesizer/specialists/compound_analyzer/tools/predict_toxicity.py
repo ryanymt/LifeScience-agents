@@ -17,6 +17,10 @@
 import os
 import vertexai
 from google.cloud import aiplatform
+from dotenv import load_dotenv
+
+# Load env
+load_dotenv()
 
 # Initialize Vertex AI SDK
 vertexai.init(

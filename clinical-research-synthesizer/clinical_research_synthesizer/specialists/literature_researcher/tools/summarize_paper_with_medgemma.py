@@ -20,6 +20,10 @@ deployed MedGemma model on Vertex AI.
 import os
 import vertexai
 from google.cloud import aiplatform
+from dotenv import load_dotenv
+
+# Load env
+load_dotenv()
 
 # Initialize Vertex AI SDK
 vertexai.init(
@@ -68,6 +72,7 @@ def summarize_paper(full_text: str) -> str:
     PAPER TEXT:
     {full_text[:30000]}  # Truncate to fit model context window
     ---
+    For every fact you extract, state the source of the information.
     """
 
     instances = [{"prompt": prompt}]

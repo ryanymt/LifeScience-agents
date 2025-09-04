@@ -16,7 +16,9 @@
 
 from google.adk.agents import Agent
 from . import prompt
-from .tools import search_clinical_trials, extract_preconditions
+from .tools import search_clinical_trials, scrape_trial_criteria 
+#from .tools import search_clinical_trials, extract_preconditions
+
 
 # Use a powerful model for analysis and extraction.
 MODEL = "gemini-2.5-pro"
@@ -31,6 +33,7 @@ clinical_trial_specialist = Agent(
     ),
     tools=[
         search_clinical_trials.search_trials,
-        extract_preconditions.extract_criteria,
+        scrape_trial_criteria.scrape_criteria_from_url,
+       # extract_preconditions.extract_criteria,
     ],
 )
