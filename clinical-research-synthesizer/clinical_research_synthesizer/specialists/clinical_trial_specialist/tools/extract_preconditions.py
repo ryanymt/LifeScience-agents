@@ -1,0 +1,89 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+Tool for extracting inclusion and exclusion criteria from a clinical trial
+using a TxGemma Chat model on Vertex AI.
+"""
+import os
+import requests
+import vertexai
+from google.cloud import aiplatform
+
+# Initialize Vertex AI SDK
+vertexai.init(
+    project=os.environ.get("GOOGLE_CLOUD_PROJECT"),
+    location=os.environ.get("GOOGLE_CLOUD_LOCATION"),
+)
+
+BASE_URL = "https://clinicaltrials.gov/api/v2/studies/"
+
+
+def extract_criteria(trial_id: str) -> str:
+    """
+    Given a clinical trial ID, fetches the trial data and extracts criteria.
+
+    Args:
+        trial_id: The NCT ID for the clinical trial (e.g., NCT04846487).
+
+    Returns:
+        A string containing the formatted inclusion and exclusion criteria.
+    """
+    # 1. Fetch the full trial data from the API
+    try:
+        response = requests.get(f"{BASE_URL}{trial_id}", params={"format": "json"})
+        response.raise_for_status()
+        data = response.json()
+        eligibility_criteria = (
+            data.get("protocolSection", {})
+            .get("eligibilityModule", {})
+            .get("eligibilityCriteria", "")
+        )
+        if not eligibility_criteria:
+            return f"No eligibility criteria found for trial ID: {trial_id}."
+
+    except requests.exceptions.RequestException as e:
+        return f"Could not fetch data for trial ID {trial_id}. Error: {e}"
+
+    # 2. Use TxGemma Chat to extract the criteria from the text
+    endpoint_id = os.environ.get("TXGEMMA_CHAT_ENDPOINT_ID")
+    if not endpoint_id:
+        return "Error: TXGEMMA_CHAT_ENDPOINT_ID environment variable is not set."
+
+    endpoint = aiplatform.Endpoint(
+        endpoint_name=(
+            f"projects/{os.environ['GOOGLE_CLOUD_PROJECT']}"
+            f"/locations/{os.environ['GOOGLE_CLOUD_LOCATION']}"
+            f"/endpoints/{endpoint_id}"
+        )
+    )
+
+    prompt = f"""
+    Read the following eligibility criteria from a clinical trial protocol.
+    Extract the 'Inclusion Criteria' and 'Exclusion Criteria' into two
+    separate, clearly labeled bulleted lists.
+
+    CRITERIA TEXT:
+    {eligibility_criteria}
+    """
+
+    instances = [{"prompt": prompt}]
+    try:
+        response = endpoint.predict(instances=instances)
+        return (
+            f"Pre-conditions for Trial ID: {trial_id}\n\n"
+            f"{response.predictions[0]}"
+        )
+    except Exception as e:
+        return f"An error occurred calling the TxGemma endpoint: {e}"

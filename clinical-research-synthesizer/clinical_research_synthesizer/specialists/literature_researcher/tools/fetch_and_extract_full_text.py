@@ -1,0 +1,62 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+Tool for finding, downloading, and extracting text from a scientific paper's PDF.
+"""
+
+import io
+import PyPDF2
+import requests
+
+from google.adk.tools import google_search
+
+
+def fetch_and_extract(paper_title: str) -> str:
+    """
+    Finds a PDF of a paper using Google Search, downloads it, and extracts the text.
+
+    Args:
+        paper_title: The title of the paper to retrieve.
+
+    Returns:
+        The full text of the paper or an error message.
+    """
+    # Use the google_search tool to find the PDF URL
+    query = f'"{paper_title}" filetype:pdf'
+    search_results = google_search.search(queries=[query])
+
+    pdf_url = None
+    if search_results and search_results[0].results:
+        for result in search_results[0].results:
+            if result.url.endswith(".pdf"):
+                pdf_url = result.url
+                break
+    
+    if not pdf_url:
+        return f"Could not find a PDF for '{paper_title}'."
+
+    # Download and extract the text
+    try:
+        response = requests.get(pdf_url)
+        response.raise_for_status()
+        pdf_file = io.BytesIO(response.content)
+        reader = PyPDF2.PdfReader(pdf_file)
+        full_text = "".join(page.extract_text() for page in reader.pages)
+        if not full_text.strip():
+            return "PDF downloaded, but no text could be extracted."
+        return f"Successfully extracted text from {pdf_url}:\n\n{full_text}"
+    except Exception as e:
+        return f"Failed to process PDF from {pdf_url}. Error: {e}"
+        
