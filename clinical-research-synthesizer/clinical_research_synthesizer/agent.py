@@ -20,12 +20,16 @@ from google.adk.agents import LlmAgent
 from google.adk.tools.agent_tool import AgentTool
 
 from . import prompt
-
-# Import our refactored and newly created specialist agents.
+# Import all three specialist agents
+from .specialists.literature_researcher import (
+    agent as literature_researcher_agent,
+)
 from .specialists.clinical_trial_specialist import (
     agent as clinical_trial_specialist_agent,
 )
-from .specialists.literature_researcher import agent as literature_researcher_agent
+from .specialists.search_specialist import (
+    agent as search_specialist_agent,
+)
 
 # Use a powerful model for the coordinator's reasoning and planning.
 MODEL = "gemini-2.5-pro"

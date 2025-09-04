@@ -35,7 +35,7 @@ def fetch_and_extract(paper_title: str) -> str:
     """
     # Use the google_search tool to find the PDF URL
     query = f'"{paper_title}" filetype:pdf'
-    search_results = google_search.search(queries=[query])
+    search_results = google_search(queries=[query])
 
     pdf_url = None
     if search_results and search_results[0].results:

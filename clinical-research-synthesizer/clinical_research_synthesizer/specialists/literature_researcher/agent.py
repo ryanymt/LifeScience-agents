@@ -15,19 +15,12 @@
 """Defines the specialist 'literature_researcher' agent."""
 
 from google.adk.agents import Agent
-from google.adk.tools import google_search
-from .specialists.search_specialist import agent as search_specialist_agent
 from . import prompt
-
-#sub agents import
-from .specialists.search_specialist import agent as search_specialist_agent
-from .specialists.literature_researcher import agent as literature_researcher_agent
-from .specialists.search_specialist import agent as search_specialist_agent
 
 # tools import
 from .tools import (
     fetch_articles,
-    fetch_and_extract_full_text,
+    extract_text_from_pdf,
     summarize_paper_with_medgemma,
 )
 
@@ -43,7 +36,7 @@ literature_researcher = Agent(
     ),
     tools=[
         fetch_articles.fetch_pubmed_articles,
-        fetch_and_extract_full_text.fetch_and_extract,
+        extract_text_from_pdf.extract_pdf_text_from_url, 
         summarize_paper_with_medgemma.summarize_paper,
     ],
 )

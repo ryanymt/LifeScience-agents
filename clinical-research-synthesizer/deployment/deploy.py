@@ -49,7 +49,7 @@ def create_agent(env_vars):
             "PyPDF2>=3.0.0",
             "beautifulsoup4>=4.12.0",
         ],
-        extra_packages=["./clinial_research_synthesizer"],
+        extra_packages=["./clinical_research_synthesizer"],
         env_vars=env_vars,
     )
     print(f"Created remote agent: {remote_agent.resource_name}")

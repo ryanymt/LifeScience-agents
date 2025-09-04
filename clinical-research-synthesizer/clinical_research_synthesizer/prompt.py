@@ -41,13 +41,11 @@ trials.
 **### 2. Execute & Delegate (Literature Workflow)**
 You must follow this exact sequence:
 1.  Call `literature_researcher.fetch_pubmed_articles` to get paper titles.
-2.  Take the most relevant paper title and call `search_specialist` with a
-    query like `"<paper_title>" filetype:pdf` to find a direct URL to the PDF.
-3.  Take the PDF URL from the search result and call
-    `literature_researcher.extract_pdf_text_from_url` to get the full text.
-4.  Take the full text and call `literature_researcher.summarize_paper` to get
+2.  Take the most relevant paper title and call 
+    `literature_researcher.fetch_and_extract` to find the PDF and get the full text in one step.
+3.  Take the full text and call `literature_researcher.summarize_paper` to get
     the structured summary.
-5.  Repeat for at least two more papers to gather sufficient evidence.
+4.  Repeat for at least two more papers to gather sufficient evidence.
 
 **### 3. Execute & Delegate (Clinical Trial Workflow)**
 Once you have the literature summaries, call the `clinical_trial_specialist`
