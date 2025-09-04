@@ -1,15 +1,23 @@
-# NEW AGENT - WIP . To be Updated
+# Clinical Research Synthesizer
 
-**Agentic-Tx** is a sophisticated AI agent designed to accelerate early-stage drug discovery workflows. Evolving from the concepts demonstrated in the original [TxGemma Agentic Demo notebook](https://github.com/google-gemini/gemma-cookbook/blob/main/TxGemma/%5BTxGemma%5DAgentic_Demo_with_Hugging_Face.ipynb), this project implements a robust, multi-agent system using the ADK framework and Google Cloud's Vertex AI.
+**Clinical Research Synthesizer** is a sophisticated AI agent designed to accelerate early-stage clinical research workflows. This project implements a robust, multi-agent system using the ADK framework and Google Cloud's Vertex AI.
 
 The agent can perform complex, multi-step research tasks by decomposing a user's query into a logical plan and delegating tasks to its specialized sub-agents.
 
+**Problem it Solves**: It addresses the slow, manual process of gathering and making sense of information from disconnected sources like scientific literature (PubMed), clinical trial data (ClinicalTrials.gov).
+
+**How it Can be Expanded**: Its modular design allows for easy expansion. New specialists can be added to connect to more data sources (e.g., genomics databases, internal company data) or to perform more advanced analyses, such as predicting drug-protein interactions or summarizing regulatory documents.
+
 ### Key Capabilities
-* **Compound Identification**: Looks up chemical compounds from SMILES strings using the PubChem database to retrieve their common names and properties.
-* **Toxicity Prediction**: Utilizes a deployed TxGemma `predict` model to assess the clinical toxicity of a compound.
-* **Literature Research**: Performs deep searches of the PubMed database to find relevant scientific articles for therapeutic context.
-* **General Knowledge Q&A**: Answers general therapeutic questions using a deployed TxGemma `chat` model.
-* **Transparent Reasoning**: The agent explicitly states its execution plan, allowing users to see its step-by-step reasoning process.
+* **Literature Research:** Performs deep searches of the PubMed database to find relevant scientific articles for therapeutic context.
+
+* **Full-Text Analysis:** Extracts and summarizes the full text of scientific papers from PDF URLs.
+
+* **Clinical Trial Search:** Finds relevant clinical trials on ClinicalTrials.gov.
+
+* **Eligibility Criteria Extraction:** Extracts and parses inclusion and exclusion criteria from clinical trials.
+
+* **Transparent Reasoning:** The agent explicitly states its execution plan, allowing users to see its step-by-step reasoning process.
 
 ---
 
@@ -20,9 +28,8 @@ The agent can perform complex, multi-step research tasks by decomposing a user's
 Before you begin, ensure you have the following set up:
 
 1.  **Google Cloud Project**: A Google Cloud project with billing enabled and the **Vertex AI API** enabled.
-2.  **TxGemma Model Endpoints (Crucial Step)**: You must deploy two TxGemma models from the Hugging Face Hub to two separate **Vertex AI Endpoints**.
-    * **Predict Model**: Deploy `google/txgemma-9b-predict` (or another predict variant). **Copy the Endpoint ID**.
-    * **Chat Model**: Deploy `google/txgemma-9b-chat` (or another chat variant). **Copy the Endpoint ID**.
+2.  **MedGemma Model Endpoint (Crucial Step)**: You must deploy the google/medgemma-1.0 model from the **Vertex AI Model Garden** to a **Vertex AI Endpoint**.
+    * **Copy the Endpoint ID.**
 3.  **Authentication**: Authenticate your local environment with Google Cloud:
     ```bash
     gcloud auth application-default login
@@ -34,7 +41,7 @@ Before you begin, ensure you have the following set up:
 1.  **Clone the Repository**:
     ```bash
     git clone https://github.com/ryanymt/LifeScience-agents.git
-    cd drug-discovery_agent
+    cd clinical-research-synthesizer
     ```
 
 2.  **Install Dependencies**:
@@ -54,9 +61,9 @@ Before you begin, ensure you have the following set up:
     GOOGLE_CLOUD_LOCATION="gcp-region" # e.g., us-central1
     GOOGLE_CLOUD_STORAGE_BUCKET="gcs-bucket-for-staging"
 
-    # The Endpoint IDs for your deployed TxGemma models
-    TXGEMMA_PREDICT_ENDPOINT_ID="txgemma-predict-endpoint-id"
-    TXGEMMA_CHAT_ENDPOINT_ID="txgemma-chat-endpoint-id"
+    # The Endpoint ID for your deployed MedGemma model
+    MEDGEMMA_ENDPOINT_ID="medgemma-endpoint-id"
+
     ```
 
 ---
@@ -69,14 +76,10 @@ You can interact with the agent locally using the `adk run` command. This is per
 
 **Basic Run:**
 ```bash
-poetry run adk run "What is the common name for the compound with SMILES CC(=O)OC1=CC=CC=C1C(=O)O ?"
+poetry run adk run clinical_research_synthesizer/ "Summarize the latest research on the use of Lecanemab for early Alzheimer's disease. What are the common pre-conditions and exclusion criteria for patients in its clinical trials, particularly regarding cerebral amyloid angiopathy?"
 ```
+This will take a few minutes as it'll need to iterate a few papers and trails results. 
 
-**Comprehensive Analysis Example:**
-To test the full multi-step workflow, use the complex comparative query. The agent will respond with its execution plan followed by the detailed analysis.
-```bash
-poetry run adk run "Which of the following drugs is preferred for further development? 1. CC(=O)OC1=CC=CC=C1C(=O)O or 2. O=C(CCCCCCC(=O)Nc1ccccc1)NO"
-```
 
 ### Deployment to Vertex AI Agent Engine
 
@@ -105,16 +108,16 @@ poetry run python deployment/deploy.py --delete --resource_id="your-agent-resour
 
 The agent uses a hierarchical design:
 
-* **`discovery_coordinator` (Main Agent)**: The "brain" of the operation. It analyzes user queries, creates a multi-step plan, and delegates tasks.
+* **`research_coordinator` (Main Agent)**: The "brain" of the operation. It analyzes user queries, creates a multi-step plan, and delegates tasks.
 * **`specialists/` (Sub-Agents)**:
-    * **`compound_analyzer`**: A specialist for all technical analyses of chemical compounds (identification via PubChem, toxicity prediction).
-    * **`literature_researcher`**: A specialist for retrieving information from external knowledge bases (searching PubMed, general Q&A).
+    * **`literature_researcher`**: A specialist for all literature research tasks, including finding papers, extracting text, and summarizing with MedGemma.
+    * **`clinical_trial_specialist`**: A specialist for finding and extracting information from clinical trials.
+    * **`search_specialist`**: A specialist for performing general Google searches to find PDF URLs.
 
 This modular structure makes the agent easy to maintain and extend with new tools and capabilities.
 
 ----
 ## Agent Usage
 Google AgentSpace is used for the demo. 
-
 
 Own front-end UI can be built and call Agent engine's Agent API. (might try to add that frontend UI later)
