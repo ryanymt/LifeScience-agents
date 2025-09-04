@@ -16,7 +16,15 @@
 
 from google.adk.agents import Agent
 from google.adk.tools import google_search
+from .specialists.search_specialist import agent as search_specialist_agent
 from . import prompt
+
+#sub agents import
+from .specialists.search_specialist import agent as search_specialist_agent
+from .specialists.literature_researcher import agent as literature_researcher_agent
+from .specialists.search_specialist import agent as search_specialist_agent
+
+# tools import
 from .tools import (
     fetch_articles,
     fetch_and_extract_full_text,

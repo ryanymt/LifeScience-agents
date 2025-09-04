@@ -20,8 +20,6 @@ from google.adk.tools.agent_tool import AgentTool
 
 from . import prompt
 
-# We will create these specialist agents in the upcoming steps.
-# For now, we import them to define our coordinator's tools.
 from .specialists.compound_analyzer import agent as compound_analyzer_agent
 from .specialists.literature_researcher import agent as literature_researcher_agent
 
