@@ -16,7 +16,8 @@
 
 from google.adk.agents import Agent
 from . import prompt
-from .tools import search_clinical_trials, scrape_trial_criteria 
+from .tools import search_clinical_trials, get_eligibility_criteria
+#from .tools import search_clinical_trials, scrape_trial_criteria 
 #from .tools import search_clinical_trials, extract_preconditions
 
 
@@ -33,7 +34,8 @@ clinical_trial_specialist = Agent(
     ),
     tools=[
         search_clinical_trials.search_trials,
-        scrape_trial_criteria.scrape_criteria_from_url,
+        get_eligibility_criteria.get_eligibility_criteria_from_api,
+        # scrape_trial_criteria.scrape_criteria_from_url,
        # extract_preconditions.extract_criteria,
     ],
 )
