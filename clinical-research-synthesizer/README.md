@@ -20,7 +20,7 @@ The agent can perform complex, multi-step research tasks by decomposing a user's
 * **Transparent Reasoning:** The agent explicitly states its execution plan, allowing users to see its step-by-step reasoning process.
 
 
-<img width="1365" height="761" alt="LifeScience Diagrams - Page 3" src="https://github.com/user-attachments/assets/93209ec6-61c4-4511-820e-10036d0ed84e" />
+<img width="1365" height="761" alt="LifeScience Diagrams - Page 3 (1)" src="https://github.com/user-attachments/assets/2699cefb-a65b-49c9-875a-29f96619c62b" />
 
 
 ---
@@ -125,5 +125,6 @@ This modular structure makes the agent easy to maintain and extend with new tool
 Google AgentSpace is used for the demo. 
 
 Own front-end UI can be built and call Agent engine's Agent API. (might try to add that frontend UI later)
+
 
 
