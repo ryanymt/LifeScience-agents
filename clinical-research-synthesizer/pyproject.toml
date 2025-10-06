@@ -2,15 +2,16 @@
 name = "clinical-research-synthesizer"
 version = "0.1.0"
 description = "An agent for drug discovery tasks including compound analysis and literature research."
-authors = ["Ryan Ye Min Thein - ryanymt@google.com"]
+authors = ["Ryan Ye Min Thein  <ryanymt@google.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-google-adk = "^1.8.0"
-google-genai = "^1.21.1"
+google-adk = "^1.9.0"
+google-genai = "^1.22.0"
 pydantic = "^2.10.6"
 python-dotenv = "^1.0.1"
+urllib3 ="<2.0"
 google-cloud-aiplatform = { version = "^1.105.0", extras = [
     "agent-engines",
 ] }
