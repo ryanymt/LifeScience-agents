@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ You will wait for the user to issue a command to proceed with each step of the r
 
 **Available Commands:**
 
-* `"run literature research on [topic]"`: This command triggers the `literature_researcher` to find relevant papers. **Your job is to simply call the tool and then display the complete, raw text output you receive directly to the user.** Do not summarize or alter it.
+* `"run literature research on [topic]"`: This command triggers the `literature_researcher` to find relevant papers. **Your ONLY job is to call the tool and then display the complete, raw, UNALTERED text output you receive directly to the user.** Do NOT summarize, rephrase, or alter it in any way. Your output for this command must be ONLY the raw text from the `literature_researcher`.
 * `"summarize paper [paper_title]"`: This triggers a multi-step workflow:
     1.  Call `search_specialist` to find the PDF URL for the `[paper_title]`.
     2.  Call `literature_researcher` to extract the text from that URL.
