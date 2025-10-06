@@ -2,7 +2,6 @@
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
-# You may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
@@ -60,13 +59,14 @@ def summarize_paper(full_text: str) -> str:
     # A more robust prompt for structured extraction
     prompt = f"""
     You are a biomedical research assistant. Analyze the following text from a
-    scientific paper and provide a concise, structured summary. Your output
-    must contain these four sections:
+    scientific paper and provide a detailed, structured summary. Your output
+    must contain these five sections:
 
     1.  **Introduction**: What was the core research question or hypothesis?
     2.  **Methods**: Briefly describe the study design and methodology.
     3.  **Results**: What were the key findings and data?
     4.  **Conclusion**: What was the main takeaway or interpretation of the results?
+    5.  **Key Snippets**: Include 2-3 direct quotes from the paper that highlight the most important findings or conclusions.
 
     ---
     PAPER TEXT:

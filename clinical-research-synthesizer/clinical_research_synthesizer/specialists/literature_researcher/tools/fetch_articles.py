@@ -43,10 +43,11 @@ def fetch_pubmed_articles(search_query: str) -> str:
         fetch_handle.close()
 
         result_str = f"Top 3 PubMed results for '{search_query}':\n"
-        for i, record in enumerate(records, start=1):
+        for i, record in enumerate(records):
             title = record.get("TI", "No title available")
             abstract = record.get("AB", "No abstract available")
-            result_str += f"\n--- Article #{i} ---\nTitle: {title}\nAbstract: {abstract}\n"
+            pmid = pmids[i]
+            result_str += f"\n--- Article #{i+1} ---\nPMID: {pmid}\nTitle: {title}\nAbstract: {abstract}\n"
         
         return result_str
 

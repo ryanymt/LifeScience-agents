@@ -19,10 +19,20 @@ from google.adk.tools import google_search
 
 MODEL = "gemini-2.5-flash"  
 
+# --- UPDATED INSTRUCTION ---
+UPDATED_INSTRUCTION = """
+Your job is to find the most relevant, direct, and publicly accessible PDF URL for a given search query.
+
+1.  Analyze the search results provided by the tool.
+2.  Your final answer **MUST BE ONLY a single URL** that ends with `.pdf`.
+3.  **DO NOT** return any URLs that start with 'vertexaisearch.cloud.google.com'.
+4.  If you cannot find a direct PDF link, you must respond with the text "Could not find a direct PDF link.".
+"""
+
 search_specialist = Agent(
     name="search_specialist",
     model=MODEL,
-    instruction="Your job is to find the most relevant URL for a given search query.",
+    instruction=UPDATED_INSTRUCTION, # Use the new, more specific instruction
     description="Performs a Google search and returns the most relevant URL.",
     tools=[google_search],
 )

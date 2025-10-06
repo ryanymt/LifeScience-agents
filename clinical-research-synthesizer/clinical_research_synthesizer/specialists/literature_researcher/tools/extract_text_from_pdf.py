@@ -44,7 +44,9 @@ def extract_pdf_text_from_url(pdf_url: str) -> str:
                 "Successfully downloaded the PDF, but could not extract text. "
                 "The PDF may be image-based or corrupted."
             )
-        return f"Successfully extracted text from {pdf_url}:\n\n{full_text}"
+        # --- CHANGE ---
+        # Return ONLY the raw text for clean input into the next tool.
+        return full_text
 
     except Exception as e:
         return f"Failed to download or parse the PDF from {pdf_url}. Error: {e}"

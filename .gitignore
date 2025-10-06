@@ -210,3 +210,4 @@ __marimo__/
 medical-research/deployment/agentspace.sh
 medical-research/deployment/temp-deploy.sh
 medical-research/deployment/temp.sh
+temp/
