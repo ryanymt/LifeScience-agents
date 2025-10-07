@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Deployment script for the Drug Discovery Agent."""
+"""Deployment script for the Clinical Research Synthesizer Agent."""
 
 import os
 import vertexai
 from absl import app, flags
 from dotenv import load_dotenv
-from drug_discovery_agent.agent import root_agent
+from clinical_research_synthesizer.agent import root_agent
 from vertexai import agent_engines
 from vertexai.preview.reasoning_engines import AdkApp
 
@@ -85,7 +85,7 @@ def main(_):
     # Load secrets from the .env file for the agent engine.
     # need IDs for MedGemma and TxGemma Chat.
     env_vars["MEDGEMMA_ENDPOINT_ID"] = os.getenv("MEDGEMMA_ENDPOINT_ID")
-    env_vars["TXGEMMA_CHAT_ENDPOINT_ID"] = os.getenv("TXGEMMA_CHAT_ENDPOINT_ID")
+    #env_vars["TXGEMMA_CHAT_ENDPOINT_ID"] = os.getenv("TXGEMMA_CHAT_ENDPOINT_ID")
 
     if not all(
         [
@@ -93,7 +93,7 @@ def main(_):
             location,
             bucket,
             env_vars["MEDGEMMA_ENDPOINT_ID"],
-            env_vars["TXGEMMA_CHAT_ENDPOINT_ID"],
+        #    env_vars["TXGEMMA_CHAT_ENDPOINT_ID"],
         ]
     ):
         raise ValueError(

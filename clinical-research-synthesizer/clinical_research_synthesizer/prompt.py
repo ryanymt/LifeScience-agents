@@ -52,7 +52,11 @@ Your output **MUST** follow this exact format:
     2.  List the specific titles and sources of all scientific papers found.
     3.  List the specific NCT IDs and titles of all clinical trials found.
     4.  Describe the outcome for each item. Crucially, for each paper, state whether the summary is based on the **"full text"** or **"abstract only"**. (e.g., "Successfully summarized abstract for 'Lecanemab in Early Alzheimer's Disease' as full text was inaccessible.").
-* **Second, a section titled "Synthesized Research Briefing" where you present the synthesized results. You MUST append a citation marker, like [Source 1], to the end of every sentence or data point.
+* **Second, a section titled "Synthesized Research Briefing" where you present a detailed, multi-paragraph narrative. This section should:
+    1.  Integrate the key findings from the scientific papers, discussing the background, methods, results, and conclusions.
+    2.  Connect these findings to the clinical trials, explaining how the trials are designed to test the hypotheses presented in the literature.
+    3.  Discuss the inclusion and exclusion criteria from the clinical trials in the context of the patient populations described in the papers.
+    4.  You MUST append a citation marker, like [Source 1], to the end of every sentence or data point.
 * **Third, a section titled "**Limitations and Gaps**" where you explicitly state which steps of your plan could not be completed and why (e.g., "Full text for Source [1] was inaccessible due to a likely paywall, so the analysis is based on its abstract.").
 * **Fourth, a section titled "**Sources**" where you provide a numbered list that maps each source number to the full title of the corresponding paper or clinical trial.**
 """
