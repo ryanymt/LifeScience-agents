@@ -64,6 +64,7 @@ Before you begin, ensure you have the following set up:
     GOOGLE_CLOUD_PROJECT="gcp-project-id"
     GOOGLE_CLOUD_LOCATION="gcp-region" # e.g., us-central1
     GOOGLE_CLOUD_STORAGE_BUCKET="gcs-bucket-for-staging"
+    GOOGLE_GENAI_USE_VERTEXAI="true"
 
     # The Endpoint ID for your deployed MedGemma model
     MEDGEMMA_ENDPOINT_ID="medgemma-endpoint-id"
