@@ -35,7 +35,7 @@ literature_researcher = Agent(
         "scientific papers from PubMed and the web."
     ),
     tools=[
-        fetch_articles.fetch_pubmed_articles,
+        #fetch_articles.fetch_pubmed_articles,
         extract_text_from_pdf.extract_pdf_text_from_url, 
         summarize_paper_with_medgemma.summarize_paper,
     ],
