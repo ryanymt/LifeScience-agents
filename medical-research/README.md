@@ -74,6 +74,7 @@ You can interact with the agent locally using the `adk run` command. This is per
 **Run with a medical question:**
 ```bash
 poetry run adk run medical_research/ "What are the symptoms of high blood pressure?"
+```
 
 # Agent Demo Video
 - Main agent (Gemini) routing patient diagnosis query (with medical history, symptom, early examination findings, lab test results, and challanges) to Medical Search Agent (MedGemma) and suggest diagnosis tests. 
