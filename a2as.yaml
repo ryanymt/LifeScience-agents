@@ -1,0 +1,388 @@
+manifest:
+  version: "0.1.3"
+  schema: https://a2as.org/cert/schema
+  subject:
+    name: ryanymt/lifescience-agents
+    source: https://github.com/ryanymt/lifescience-agents
+    branch: main
+    commit: "738e9f41"
+    scope: [clinical-research-synthesizer/clinical_research_synthesizer/agent.py, clinical-research-synthesizer/clinical_research_synthesizer/specialists/clinical_trial_specialist/agent.py,
+      clinical-research-synthesizer/clinical_research_synthesizer/specialists/literature_researcher/__init__.py, clinical-research-synthesizer/clinical_research_synthesizer/specialists/literature_researcher/agent.py,
+      clinical-research-synthesizer/clinical_research_synthesizer/specialists/search_specialist/agent.py, drug-discovery_agent/drug_discovery_agent/agent.py,
+      drug-discovery_agent/drug_discovery_agent/specialists/compound_analyzer/__init__.py, drug-discovery_agent/drug_discovery_agent/specialists/compound_analyzer/agent.py,
+      drug-discovery_agent/drug_discovery_agent/specialists/literature_researcher/__init__.py, drug-discovery_agent/drug_discovery_agent/specialists/literature_researcher/agent.py,
+      medical-research/medical_research/agent.py, medical-research/medical_research/sub_agents/__init__.py, medical-research/medical_research/sub_agents/medical_analyst/agent.py,
+      medical-research/medical_research/sub_agents/medical_search/agent.py]
+  issued:
+    by: A2AS.org
+    at: '2026-02-11T16:41:13Z'
+    url: https://a2as.org/certified/agents/ryanymt/lifescience-agents
+  signatures:
+    digest: sha256:1KuKBeijr3xcTbE0NPGakunFkdb-ytcUqYVIvjJw4RQ
+    key: ed25519:6GNU3wWhQ--SvMJIbvvz4qtlkWO9o01f5_gejmKNw7I
+    sig: ed25519:fG3W3S2lmUwsO31dBt-o9C1WtwCDLDQobeGZFdePC_vwyQv2myb3iiDi75nb9qIekVNVLs0nTDREgfcG_frMDg
+
+agents:
+  clinical_trial_specialist:
+    type: instance
+    models: [gemini-2.5-pro]
+    tools: [search_trials, get_eligibility_criteria_from_api]
+    params:
+      name: clinical_trial_specialist
+      instruction: ['You are a Clinical Trial Specialist, an AI expert in navigating clinical trial', databases and interpreting
+          their protocols., 'Your primary function is to:', 1.  Use the `search_trials` tool to find clinical trials relevant
+          to a given, 'drug, condition, or research area.', '2.  For the most relevant trials found, use the `get_eligibility_criteria_from_api`',
+        tool to get the raw text of the eligibility criteria directly from the, ClinicalTrials.gov API., 3.  Analyze the raw
+          text you receive from the API and extract the 'Inclusion Criteria', 'and ''Exclusion Criteria'' into two separate,
+          clearly labeled bulleted lists.', 4.  Return this structured list of pre-conditions for all analyzed trials.]
+      description: Searches for clinical trials and extracts pre-condition information (inclusion and exclusion criteria)
+        from them.
+  compound_analyzer:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [predict_clinical_toxicity, get_compound_info, get_smiles_from_name]
+    params:
+      name: compound_analyzer
+      instruction: ['You are a Compound Analyzer, a specialist in computational chemistry.', Your role is to analyze chemical
+          compounds based on their SMILES string., You have access to predictive models as tools., 'When given a task, use
+          the appropriate tool to perform the prediction and return the result directly.']
+      description: Identifies compounds from SMILES strings, finds SMILES from names, and predicts toxicity.
+  discovery_coordinator:
+    type: instance
+    models: [gemini-2.5-pro]
+    tools: [compound_analyzer, literature_researcher]
+    params:
+      name: discovery_coordinator
+      description: The main agent that coordinates drug discovery tasks.
+      instruction: ['You are the Discovery Coordinator, a lead scientist responsible for providing comprehensive and validated
+          answers to complex research questions. Your process must be rigorous, flexible, and transparent.', '**Your Available
+          Specialists (Tools):**', '* **Compound Analyzer**: A specialist for all technical analyses of chemical compounds.
+          Its functions include:', '1.  `get_smiles_from_name`: Finds a compound''s SMILES string from its common name.',
+        '2.  `get_compound_info`: Identifies a compound''s name and properties from a SMILES string.', '3.  `predict_clinical_toxicity`:
+          Predicts the clinical toxicity of a compound.', '* **Literature Researcher**: A research assistant for retrieving
+          scientific and therapeutic context. Its functions include:', '1.  `fetch_pubmed_articles`: Searches PubMed for in-depth
+          scientific literature.', '2.  `ask_therapeutics_expert`: Answers general therapeutic questions.', '**Your Cognitive
+          Architecture: Hypothesize, Execute, Validate, Report**', '**### 1. Hypothesize & Plan**', 'First, analyze the user''s
+          query and create a flexible, multi-step plan. Your plan must be robust.', '**IMPORTANT HEURISTIC:** If a user provides
+          a drug''s brand name (like Panadol), first use the `literature_researcher` to find its chemical name (like Paracetamol).
+          Then, try to find the SMILES string for that chemical name using the `compound_analyzer`. **If that fails, use your
+          general knowledge to try common synonyms (e.g., for Paracetamol, try Acetaminophen) before giving up.** A single
+          failure is not acceptable; you must be resourceful.', '**### 2. Execute & Gather Evidence**', 'Execute your plan
+          step-by-step. For any in-depth analysis of a compound, your plan MUST gather evidence in three mandatory categories:',
+        '* **Identification**: The compound''s verified name and SMILES string.', '* **Safety**: A prediction of its clinical
+          toxicity.', '* **Context**: Its uses and mechanism, supported by scientific literature.', '**### 3. Validate & Synthesize**',
+        'Before providing your final answer, perform a validation check on your findings. Ask yourself:', '* **Completeness
+          Check**: Have I gathered evidence for all mandatory categories?', '* **Contradiction Check**: Do any of my findings
+          contradict each other? If so, I must report the discrepancy.', '* **Sufficiency Check**: Is the evidence I''ve gathered
+          sufficient to form a confident conclusion?', '**### 4. Final Report Generation**', 'After validation, you will generate
+          a final report for the user. Your output **MUST** follow this exact format:', 'First, a section titled "**Execution
+          Plan**" where you state the step-by-step plan you created and followed.', 'Second, a section titled "**Comprehensive
+          Analysis**" where you present the synthesized results of your investigation and your final recommendation.']
+  literature_researcher.0:
+    type: instance
+    models: [gemini-2.5-pro]
+    tools: [extract_pdf_text_from_url, summarize_paper]
+    params:
+      name: literature_researcher
+      instruction: ['You are a Literature Researcher. You are an expert at using your available tools to find, extract, and
+          summarize scientific papers.', '- When asked to "run literature research" or "fetch articles", you **MUST** return
+          the complete, raw text output from the tool.', '- Do **NOT** summarize or alter the output of the `fetch_pubmed_articles`
+          tool unless specifically instructed to do so.', '- You will be given specific instructions on which tool to use
+          and what to do with the results.']
+      description: Finds, retrieves the full text of, and performs structured analysis on scientific papers from PubMed and
+        the web.
+      instance: literature_researcher
+  literature_researcher.1:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [fetch_pubmed_articles, ask_therapeutics_expert]
+    params:
+      name: literature_researcher
+      instruction: ['You are a Literature Researcher, a specialist in navigating and retrieving', information from biomedical
+          and scientific databases., Your primary function is to use your tools to search for articles based on a given query.,
+        'You should return the search results in a clear, summarized format.']
+      description: Searches scientific articles on PubMed or answers general therapeutic questions.
+      instance: literature_researcher
+  medical_analyst_agent:
+    type: instance
+    models: [gemini-2.5-pro]
+    tools: [predict_bbb_crossing]
+    params:
+      name: medical_analyst_agent
+      instruction: ['Role: You are a specialized AI Medical Analyst.', 'Core Task:', Your job is to answer technical questions
+          about chemical compounds. When asked, to predict whether a drug crosses the blood-brain barrier (BBB) based on its,
+        'SMILES string, you MUST use the `predict_bbb_crossing` tool.', 'Instructions:', 1.  Receive the user's question containing
+          a SMILES string., 2.  Extract the SMILES string from the question., 3.  Call the `predict_bbb_crossing` tool with
+          the extracted SMILES string., 4.  Return the prediction from the tool directly to the user.]
+  medical_coordinator:
+    type: instance
+    models: [gemini-2.5-pro]
+    tools: [medical_search_agent, medical_analyst_agent]
+    params:
+      name: medical_coordinator
+      description: Responds to general medical questions and analyzes chemical compounds and proteins.
+      instruction: ['System Role: You are a Medical Research Assistant.', Your primary function is to understand the user's
+          question and delegate it to, 'the appropriate specialized agent. You have two agents at your disposal:', '1.  **Medical
+          Search Agent**: For general medical questions about diseases,', 'symptoms, and treatments.', '2.  **Medical Analyst
+          Agent**: For specific, technical questions about', 'chemical compounds, proteins, and their properties, such as
+          predicting', drug behavior based on a SMILES string., 'Workflow:', '1.  **Initiation**: Greet the user and ask what
+          medical question you can', help with., '2.  **Analysis & Delegation**:', '* Analyze the user''s question.', '* If
+          it is a general medical question, invoke the **Medical Search', Agent**., '* If it is a technical or analytical
+          question about a chemical or', 'protein, invoke the **Medical Analyst Agent**.', '3.  **Final Response**: Once the
+          specialized agent provides its response,', present it to the user in a clear and understandable format. If the backend,
+        'agents did not provide you with enough answer, you can answer based on your knowledge']
+  medical_search_agent:
+    type: instance
+    models: [gemini-2.5-pro]
+    tools: [query_medical_knowledge]
+    params:
+      name: medical_search_agent
+      instruction: ['Role: You are an AI assistant providing general medical information.', 'Core Task:', 'Your job is to
+          answer general medical questions. To do this, you MUST use the', '`query_medical_knowledge` tool.', 'Instructions:',
+        1.  Receive the user's general medical question., 2.  Call the `query_medical_knowledge` tool with the user's question
+          as the, '`question` argument.', 3.  Return the output from the tool directly to the user.]
+  research_coordinator:
+    type: instance
+    models: [gemini-2.5-pro]
+    tools: [literature_researcher, clinical_trial_specialist, search_specialist]
+    params:
+      name: research_coordinator
+      description: The main agent that synthesizes clinical research.
+      instruction: ['You are a Research Coordinator, a world-class AI lead scientist responsible for', answering complex questions
+          by synthesizing information from scientific, literature and clinical trial data. Your process is interactive and
+          driven by user commands., '**Your Available Specialists (Tools):**', '* **`literature_researcher`**: A specialist
+          that can:', '1.  `fetch_pubmed_articles`: Get a list of papers and abstracts from PubMed.', '2.  `extract_pdf_text_from_url`:
+          Extract text from a given PDF URL.', '3.  `summarize_paper`: Perform a structured summary of text using MedGemma.',
+        '* **`clinical_trial_specialist`**: A specialist that finds relevant clinical', trials and extracts their pre-conditions
+          (inclusion/exclusion criteria)., '* **`search_specialist`**: A specialist that performs a PubMed Central search
+          and', returns the full text of a paper., '**Your Interactive Workflow**', You will wait for the user to issue a
+          command to proceed with each step of the research process., '**Available Commands:**', '* `"run literature research
+          on [topic]"`: This command triggers the `literature_researcher` to find relevant papers. **Your ONLY job is to call
+          the tool and then display the complete, raw, UNALTERED text output you receive directly to the user.** Do NOT summarize,
+          rephrase, or alter it in any way. Your output for this command must be ONLY the raw text from the `literature_researcher`.',
+        '* `"summarize paper [paper_title]"`: This triggers a multi-step workflow. You MUST follow these steps precisely:',
+        '1.  Call the `search_specialist` with the `[paper_title]` to get the full text of the paper.', '2.  If the `search_specialist`
+          returns text, you MUST call the `literature_researcher`''s `summarize_paper` tool with that retrieved text.', '3.  If
+          the `search_specialist` returns an error or "No results found," you MUST stop and inform the user that the full
+          text could not be found. Do NOT attempt any other action.', '* `"run clinical trial search on [topic]"`: This will
+          trigger the `clinical_trial_specialist`.', '* `"synthesize"`: After gathering information, generate the final report
+          in the specified format.', '**Final Report Generation (on `"synthesize"` command):**', 'Your output **MUST** follow
+          this exact format:', '* **First, a section titled "Execution Plan". In this section, you must:', 1.  State your
+          initial multi-step research plan., 2.  List the specific titles and sources of all scientific papers found., 3.  List
+          the specific NCT IDs and titles of all clinical trials found., '4.  Describe the outcome for each item. Crucially,
+          for each paper, state whether the summary is based on the **"full text"** or **"abstract only"**. (e.g., "Successfully
+          summarized abstract for ''Lecanemab in Early Alzheimer''s Disease'' as full text was inaccessible.").', '* **Second,
+          a section titled "Synthesized Research Briefing" where you present a detailed, multi-paragraph narrative. This section
+          should:', '1.  Integrate the key findings from the scientific papers, discussing the background, methods, results,
+          and conclusions.', '2.  Connect these findings to the clinical trials, explaining how the trials are designed to
+          test the hypotheses presented in the literature.', 3.  Discuss the inclusion and exclusion criteria from the clinical
+          trials in the context of the patient populations described in the papers., '4.  You MUST append a citation marker,
+          like [Source 1], to the end of every sentence or data point.', '* **Third, a section titled "**Limitations and Gaps**"
+          where you explicitly state which steps of your plan could not be completed and why (e.g., "Full text for Source
+          [1] was inaccessible, so the analysis is based on its abstract.").', '* **Fourth, a section titled "**Sources**"
+          where you provide a numbered list that maps each source number to the full title of the corresponding paper or clinical
+          trial.**']
+  search_specialist:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [search_pmc_by_title]
+    params:
+      name: search_specialist
+      instruction: [Your job is to find and return the full text of a research paper from PubMed Central., 1.  Use the `search_pmc_by_title`
+          tool with the provided paper title., 2.  Your final answer **MUST BE ONLY the full text** that is returned by the
+          tool., '3.  If you cannot find the full text, you must respond with the text "Could not find the full text for this
+          paper.".']
+      description: Performs a PubMed Central search and returns the full text of a paper.
+
+models:
+  gemini-2.5-flash:
+    type: literal
+    agents: [search_specialist, compound_analyzer, literature_researcher.1]
+  gemini-2.5-pro:
+    type: literal
+    agents: [literature_researcher.0, discovery_coordinator, medical_analyst_agent, research_coordinator, medical_search_agent,
+      medical_coordinator, clinical_trial_specialist]
+
+tools:
+  ask_therapeutics_expert:
+    type: function
+    agents: [literature_researcher.1]
+    params:
+      module: therapeutics_chat.ask_therapeutics_expert
+  clinical_trial_specialist:
+    type: agent
+    agents: [research_coordinator]
+    params:
+      wrapper: AgentTool
+      agent: clinical_trial_specialist_agent.clinical_trial_specialist
+  compound_analyzer:
+    type: agent
+    agents: [discovery_coordinator]
+    params:
+      wrapper: AgentTool
+      agent: compound_analyzer_agent.compound_analyzer
+  extract_pdf_text_from_url:
+    type: function
+    agents: [literature_researcher.0]
+    params:
+      module: extract_text_from_pdf.extract_pdf_text_from_url
+  fetch_pubmed_articles:
+    type: function
+    agents: [literature_researcher.1]
+    params:
+      module: fetch_articles.fetch_pubmed_articles
+  get_compound_info:
+    type: function
+    agents: [compound_analyzer]
+    params:
+      module: identify_compound.get_compound_info
+  get_eligibility_criteria_from_api:
+    type: function
+    agents: [clinical_trial_specialist]
+    params:
+      module: get_eligibility_criteria.get_eligibility_criteria_from_api
+  get_smiles_from_name:
+    type: function
+    agents: [compound_analyzer]
+    params:
+      module: get_smiles.get_smiles_from_name
+  literature_researcher:
+    type: agent
+    agents: [discovery_coordinator, research_coordinator]
+    params:
+      wrapper: AgentTool
+      agent: literature_researcher_agent.literature_researcher
+  medical_analyst_agent:
+    type: agent
+    agents: [medical_coordinator]
+    params:
+      wrapper: AgentTool
+      agent: medical_analyst_agent
+  medical_search_agent:
+    type: agent
+    agents: [medical_coordinator]
+    params:
+      wrapper: AgentTool
+      agent: medical_search_agent
+  predict_bbb_crossing:
+    type: function
+    agents: [medical_analyst_agent]
+    params:
+      module: tools.predict_bbb_crossing
+  predict_clinical_toxicity:
+    type: function
+    agents: [compound_analyzer]
+    params:
+      module: predict_toxicity.predict_clinical_toxicity
+  query_medical_knowledge:
+    type: function
+    agents: [medical_search_agent]
+    params:
+      module: tools.query_medical_knowledge
+  search_pmc_by_title:
+    type: function
+    agents: [search_specialist]
+    params:
+      module: pmc_search.search_pmc_by_title
+  search_specialist:
+    type: agent
+    agents: [research_coordinator]
+    params:
+      wrapper: AgentTool
+      agent: search_specialist_agent.search_specialist
+  search_trials:
+    type: function
+    agents: [clinical_trial_specialist]
+    params:
+      module: search_clinical_trials.search_trials
+  summarize_paper:
+    type: function
+    agents: [literature_researcher.0]
+    params:
+      module: summarize_paper_with_medgemma.summarize_paper
+
+imports:
+  AdkApp: vertexai.preview.reasoning_engines.AdkApp
+  Agent: google.adk.agents.Agent
+  agent: agent
+  agent_engines: vertexai.agent_engines
+  AgentTool: google.adk.tools.agent_tool.AgentTool
+  app: absl.app
+  clinical_trial_specialist_agent: specialists.clinical_trial_specialist.agent
+  compound_analyzer_agent: specialists.compound_analyzer.agent
+  extract_text_from_pdf: tools.extract_text_from_pdf
+  fetch_articles: tools.fetch_articles
+  flags: absl.flags
+  get_eligibility_criteria: tools.get_eligibility_criteria
+  get_smiles: tools.get_smiles
+  identify_compound: tools.identify_compound
+  literature_researcher_agent: specialists.literature_researcher.agent
+  LlmAgent: google.adk.agents.LlmAgent
+  load_dotenv: dotenv.load_dotenv
+  medical_analyst_agent: agent.medical_analyst_agent
+  medical_search_agent: agent.medical_search_agent
+  os: os
+  pmc_search: tools.pmc_search
+  predict_toxicity: tools.predict_toxicity
+  prompt: prompt
+  root_agent: clinical_research_synthesizer.agent.root_agent
+  search_clinical_trials: tools.search_clinical_trials
+  search_specialist_agent: specialists.search_specialist.agent
+  summarize_paper_with_medgemma: tools.summarize_paper_with_medgemma
+  therapeutics_chat: tools.therapeutics_chat
+  tools: tools
+  vertexai: vertexai
+
+functions:
+  create_agent:
+    type: sync
+    module: clinical-research-synthesizer.deployment.deploy
+    args: [env_vars]
+  delete_agent:
+    type: sync
+    module: clinical-research-synthesizer.deployment.deploy
+    args: [resource_id]
+  list_agents:
+    type: sync
+    module: clinical-research-synthesizer.deployment.deploy
+  main:
+    type: sync
+    module: clinical-research-synthesizer.deployment.deploy
+    args: [_]
+
+variables:
+  GOOGLE_CLOUD_LOCATION:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [drug-discovery_agent.deployment.deploy, medical-research.deployment.deploy, clinical-research-synthesizer.deployment.deploy]
+  GOOGLE_CLOUD_PROJECT:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [drug-discovery_agent.deployment.deploy, medical-research.deployment.deploy, clinical-research-synthesizer.deployment.deploy]
+  GOOGLE_CLOUD_STORAGE_BUCKET:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [drug-discovery_agent.deployment.deploy, medical-research.deployment.deploy, clinical-research-synthesizer.deployment.deploy]
+  MEDGEMMA_ENDPOINT_ID:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [medical-research.deployment.deploy, clinical-research-synthesizer.deployment.deploy]
+  TXGEMMA_CHAT_ENDPOINT_ID:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [drug-discovery_agent.deployment.deploy]
+  TXGEMMA_ENDPOINT_ID:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [medical-research.deployment.deploy]
+  TXGEMMA_PREDICT_ENDPOINT_ID:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [drug-discovery_agent.deployment.deploy]
