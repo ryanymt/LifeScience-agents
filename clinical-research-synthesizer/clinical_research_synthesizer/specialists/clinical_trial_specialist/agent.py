@@ -22,7 +22,7 @@ from .tools import search_clinical_trials, get_eligibility_criteria
 
 
 # Use a powerful model for analysis and extraction.
-MODEL = "gemini-2.5-pro"
+MODEL = "gemini-3.1-pro-preview"
 
 clinical_trial_specialist = Agent(
     name="clinical_trial_specialist",

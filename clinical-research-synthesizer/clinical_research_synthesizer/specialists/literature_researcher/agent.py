@@ -23,8 +23,9 @@ from .tools import (
     extract_text_from_pdf,
     summarize_paper_with_medgemma,
 )
+from ..search_specialist.tools import pmc_search
 
-MODEL = "gemini-2.5-pro"
+MODEL = "gemini-3.1-pro-preview"
 
 literature_researcher = Agent(
     name="literature_researcher",
@@ -32,11 +33,12 @@ literature_researcher = Agent(
     instruction=prompt.LITERATURE_RESEARCHER_PROMPT,
     description=(
         "Finds, retrieves the full text of, and performs structured analysis on "
-        "scientific papers from PubMed and the web."
+        "scientific papers from PubMed, PubMed Central, and the web."
     ),
     tools=[
-        #fetch_articles.fetch_pubmed_articles,
-        extract_text_from_pdf.extract_pdf_text_from_url, 
+        fetch_articles.fetch_pubmed_articles,
+        pmc_search.search_pmc_by_title,
+        extract_text_from_pdf.extract_pdf_text_from_url,
         summarize_paper_with_medgemma.summarize_paper,
     ],
 )

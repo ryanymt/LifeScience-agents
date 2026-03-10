@@ -33,7 +33,7 @@ from .specialists.search_specialist import (
 )
 
 # Use a powerful model for the coordinator's reasoning and planning.
-MODEL = "gemini-2.5-pro"
+MODEL = "gemini-3.1-pro-preview"
 
 research_coordinator = LlmAgent(
     name="research_coordinator",

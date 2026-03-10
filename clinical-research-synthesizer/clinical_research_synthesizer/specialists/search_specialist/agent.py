@@ -17,21 +17,21 @@
 from google.adk.agents import Agent
 from .tools import pmc_search
 
-MODEL = "gemini-2.5-flash"  
+MODEL = "gemini-3-flash-preview"
 
-# --- UPDATED INSTRUCTION ---
-UPDATED_INSTRUCTION = """
+INSTRUCTION = """
 Your job is to find and return the full text of a research paper from PubMed Central.
 
-1.  Use the `search_pmc_by_title` tool with the provided paper title.
-2.  Your final answer **MUST BE ONLY the full text** that is returned by the tool.
-3.  If you cannot find the full text, you must respond with the text "Could not find the full text for this paper.".
+1.  Use the `search_pmc_by_title` tool with the provided paper title or topic.
+2.  Your final answer **MUST BE ONLY the output** returned by the tool (title, PMC ID, and full text).
+3.  Do NOT summarize, rephrase, or alter the output in any way.
+4.  If the tool returns an error or no results, relay that message exactly as returned.
 """
 
 search_specialist = Agent(
     name="search_specialist",
     model=MODEL,
-    instruction=UPDATED_INSTRUCTION, # Use the new, more specific instruction
+    instruction=INSTRUCTION,
     description="Performs a PubMed Central search and returns the full text of a paper.",
     tools=[pmc_search.search_pmc_by_title],
 )

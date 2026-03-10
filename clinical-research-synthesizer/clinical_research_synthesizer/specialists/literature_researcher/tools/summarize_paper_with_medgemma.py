@@ -17,18 +17,11 @@ Tool for performing structured summarization of a research paper using a
 deployed MedGemma model on Vertex AI.
 """
 import os
-import vertexai
 from google.cloud import aiplatform
 from dotenv import load_dotenv
 
 # Load env
 load_dotenv()
-
-# Initialize Vertex AI SDK
-vertexai.init(
-    project=os.environ.get("GOOGLE_CLOUD_PROJECT"),
-    location=os.environ.get("GOOGLE_CLOUD_LOCATION"),
-)
 
 
 def summarize_paper(full_text: str) -> str:
@@ -48,34 +41,36 @@ def summarize_paper(full_text: str) -> str:
     if not endpoint_id:
         return "Error: MEDGEMMA_ENDPOINT_ID environment variable is not set."
 
+    project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
+    # MedGemma is a deployed regional endpoint — use MEDGEMMA_LOCATION (not global)
+    medgemma_location = os.environ.get("MEDGEMMA_LOCATION", "us-central1")
+
+    # Initialize aiplatform with the regional location for the MedGemma endpoint
+    aiplatform.init(project=project_id, location=medgemma_location)
     endpoint = aiplatform.Endpoint(
         endpoint_name=(
-            f"projects/{os.environ['GOOGLE_CLOUD_PROJECT']}"
-            f"/locations/{os.environ['GOOGLE_CLOUD_LOCATION']}"
+            f"projects/{project_id}"
+            f"/locations/{medgemma_location}"
             f"/endpoints/{endpoint_id}"
         )
     )
 
-    # A more robust prompt for structured extraction
-    prompt = f"""
-    You are a biomedical research assistant. Analyze the following text from a
-    scientific paper and provide a detailed, structured summary. Your output
-    must contain these five sections:
+    prompt = f"""You are a biomedical research assistant. Analyze the following text from a scientific paper and provide a detailed, structured summary. For every fact you extract, state the source of the information.
 
-    1.  **Introduction**: What was the core research question or hypothesis?
-    2.  **Methods**: Briefly describe the study design and methodology.
-    3.  **Results**: What were the key findings and data?
-    4.  **Conclusion**: What was the main takeaway or interpretation of the results?
-    5.  **Key Snippets**: Include 2-3 direct quotes from the paper that highlight the most important findings or conclusions.
+Your output must contain these five sections:
 
-    ---
-    PAPER TEXT:
-    {full_text[:30000]}  # Truncate to fit model context window
-    ---
-    For every fact you extract, state the source of the information.
-    """
+1.  **Introduction**: What was the core research question or hypothesis?
+2.  **Methods**: Briefly describe the study design and methodology.
+3.  **Results**: What were the key findings and data?
+4.  **Conclusion**: What was the main takeaway or interpretation of the results?
+5.  **Key Snippets**: Include 2-3 direct quotes from the paper that highlight the most important findings or conclusions.
 
-    instances = [{"prompt": prompt}]
+---
+PAPER TEXT:
+{full_text[:30000]}
+---"""
+
+    instances = [{"prompt": prompt, "max_tokens": 2048}]
     try:
         response = endpoint.predict(instances=instances)
         return response.predictions[0]

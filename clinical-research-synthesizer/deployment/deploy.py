@@ -79,30 +79,39 @@ def main(_):
     env_vars = {}
 
     project_id = FLAGS.project_id or os.getenv("GOOGLE_CLOUD_PROJECT")
-    location = FLAGS.location or os.getenv("GOOGLE_CLOUD_LOCATION")
     bucket = FLAGS.bucket or os.getenv("GOOGLE_CLOUD_STORAGE_BUCKET")
 
-    # Load secrets from the .env file for the agent engine.
-    # need IDs for MedGemma and TxGemma Chat.
+    # Agent Engine requires a regional location (not "global").
+    # Gemini 3.x global endpoint is configured per-agent via env vars.
+    agent_engine_location = FLAGS.location or os.getenv(
+        "AGENT_ENGINE_LOCATION", "us-central1"
+    )
+
+    # Env vars passed to the deployed agent at runtime.
+    env_vars["GOOGLE_CLOUD_PROJECT"] = project_id
+    env_vars["GOOGLE_CLOUD_LOCATION"] = "global"  # For Gemini 3.x
+    env_vars["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
     env_vars["MEDGEMMA_ENDPOINT_ID"] = os.getenv("MEDGEMMA_ENDPOINT_ID")
-    #env_vars["TXGEMMA_CHAT_ENDPOINT_ID"] = os.getenv("TXGEMMA_CHAT_ENDPOINT_ID")
+    env_vars["MEDGEMMA_LOCATION"] = os.getenv("MEDGEMMA_LOCATION", "us-central1")
 
     if not all(
         [
             project_id,
-            location,
             bucket,
             env_vars["MEDGEMMA_ENDPOINT_ID"],
-        #    env_vars["TXGEMMA_CHAT_ENDPOINT_ID"],
         ]
     ):
         raise ValueError(
-            "Missing required config. Set all required variables in your "
-            ".env file or as flags."
+            "Missing required config. Set GOOGLE_CLOUD_PROJECT, "
+            "GOOGLE_CLOUD_STORAGE_BUCKET, and MEDGEMMA_ENDPOINT_ID "
+            "in your .env file or as flags."
         )
 
+    # Agent Engine needs regional location; Gemini 3.x global is set in env_vars
     vertexai.init(
-        project=project_id, location=location, staging_bucket=f"gs://{bucket}"
+        project=project_id,
+        location=agent_engine_location,
+        staging_bucket=f"gs://{bucket}",
     )
 
     if FLAGS.create:
